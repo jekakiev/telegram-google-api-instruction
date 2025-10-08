@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Інструкція: Google API доступ для Telegram-бота</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0 18px 48px; color: #0d1b2a; background-color: #f8f9fb; }
+        h1, h2, h3 { color: #1b263b; }
+        h1 { margin-top: 32px; }
+        section { background: #ffffff; border-radius: 12px; padding: 24px; margin: 24px auto; max-width: 920px; box-shadow: 0 6px 18px rgba(15, 35, 95, 0.08); }
+        .intro { border-left: 6px solid #4c6ef5; }
+        .step-header { font-size: 20px; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+        .badge { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: #4c6ef5; color: #ffffff; font-weight: bold; }
+        ol, ul { padding-left: 20px; }
+        a { color: #274c77; text-decoration: underline; font-weight: 600; }
+        a:hover { color: #1b3a66; }
+        .screenshot { margin: 20px 0; text-align: center; }
+        .screenshot img { width: 100%; height: auto; max-width: 100%; display: block; margin: 0 auto; border-radius: 10px; border: 1px dashed #8d99ae; background: #edf2fb; padding: 16px; box-sizing: border-box; }
+        .screenshot figcaption { margin-top: 12px; font-size: 14px; color: #495057; }
+        .note { background: #edf2fb; border-left: 4px solid #4c6ef5; padding: 16px; border-radius: 8px; margin: 16px 0; }
+        code { background: #e9ecef; border-radius: 6px; padding: 3px 6px; font-size: 15px; }
+        .env-list code { display: block; padding: 8px 12px; margin: 8px 0; }
+    </style>
+</head>
+<body>
+<section class="intro">
+    <h1>🧭 Інструкція: Як підготувати Google API доступ для Telegram-бота</h1>
+    <p>Ця покрокова інструкція допоможе створити новий проєкт у Google Cloud, увімкнути потрібні API, згенерувати ключ сервісного акаунта та підготувати дані таблиці Google Sheets для роботи бота.</p>
+    <p>⏱ Орієнтовний час: 10 хвилин. Потрібен лише веббраузер.</p>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">1</span>Увійди до Google Cloud Console</h2>
+    <ol>
+        <li>Перейди за посиланням: <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer">https://console.cloud.google.com/</a></li>
+        <li>Увійди під своїм Google-акаунтом (адреса Gmail).</li>
+    </ol>
+    <figure class="screenshot">
+        <img src="screenshots/step01_sign_in.webp" alt="Екран входу до Google Cloud Console">
+        <figcaption>Вікно входу до Google Cloud Console.</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">2</span>Створи новий проєкт</h2>
+    <ol>
+        <li>У верхній панелі натисни кнопку <strong>Select project</strong>.</li>
+        <li>У модальному вікні натисни <strong>New Project</strong>.</li>
+        <li>У полі <strong>Project name</strong> введи, наприклад, <strong>telegram-bot-api</strong>.</li>
+        <li>Натисни <strong>Create</strong>, а після створення — <strong>Select Project</strong>, щоб перейти в нього.</li>
+    </ol>
+    <figure class="screenshot">
+        <img src="screenshots/step02_create_project.webp" alt="Створення нового проєкту">
+        <figcaption>Вікно створення проєкту — обери назву <em>telegram-bot-api</em>.</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">3</span>Увімкни необхідні API</h2>
+    <div class="note">
+        <p>API потрібні, щоб бот міг записувати дані в таблицю та експортувати PDF через Google Drive.</p>
+    </div>
+    <ol>
+        <li>Відкрий <a href="https://console.cloud.google.com/apis/library/sheets.googleapis.com" target="_blank" rel="noopener noreferrer">Google Sheets API</a> і натисни <strong>Enable</strong>.</li>
+        <li>Відкрий <a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener noreferrer">Google Drive API</a> і натисни <strong>Enable</strong>.</li>
+        <li>Дочекайся 1–2 хвилини, поки обидва сервіси активуються.</li>
+    </ol>
+    <figure class="screenshot">
+        <img src="screenshots/step03_enable_sheets.webp" alt="Увімкнення Google Sheets API">
+        <figcaption>Сторінка активації Google Sheets API — натисни <strong>Enable</strong>.</figcaption>
+    </figure>
+    <figure class="screenshot">
+        <img src="screenshots/step04_enable_drive.webp" alt="Увімкнення Google Drive API">
+        <figcaption>Сторінка активації Google Drive API.</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">4</span>Створи сервісний акаунт</h2>
+    <ol>
+        <li>Перейди до розділу <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener noreferrer">Service Accounts</a>.</li>
+        <li>Натисни <strong>Create Service Account</strong>.</li>
+        <li>У полі <strong>Service account name</strong> введи <strong>telegram-bot</strong>.</li>
+        <li>Натисни <strong>Create and continue</strong>.</li>
+        <li>На кроці <strong>Grant this service account access to the project</strong> натисни <strong>Select a role</strong>.</li>
+        <li>У списку ролей обери <strong>Basic → Editor</strong>.</li>
+        <li>Натисни <strong>Continue</strong>, потім <strong>Done</strong>, щоб завершити створення.</li>
+    </ol>
+    <figure class="screenshot">
+        <img src="screenshots/step05_service_accounts_list.webp" alt="Список сервісних акаунтів">
+        <figcaption>Розділ створення сервісного акаунта.</figcaption>
+    </figure>
+    <figure class="screenshot">
+        <img src="screenshots/step06_service_account_form.webp" alt="Форма створення сервісного акаунта">
+        <figcaption>Форма створення — вкажи ім’я <em>telegram-bot</em>, обери роль <strong>Editor</strong> та заверш створення.</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">5</span>Згенеруй ключ (JSON)</h2>
+    <ol>
+        <li>У списку акаунтів натисни на створений <strong>telegram-bot@…</strong>.</li>
+        <li>Відкрий вкладку <strong>Keys</strong>.</li>
+        <li>Натисни <strong>Add key → Create new key</strong>.</li>
+        <li>Обери <strong>JSON</strong> і натисни <strong>Create</strong>.</li>
+        <li>Збережи завантажений файл — це і є ключ для бота.</li>
+    </ol>
+    <figure class="screenshot">
+        <img src="screenshots/step08_keys_tab.webp" alt="Вкладка Keys сервісного акаунта">
+        <figcaption>Перейди на вкладку <strong>Keys</strong> та додай новий ключ.</figcaption>
+    </figure>
+    <figure class="screenshot">
+        <img src="screenshots/step09_create_key.webp" alt="Створення JSON-ключа">
+        <figcaption>Створи ключ у форматі <strong>JSON</strong> і збережи файл.</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">6</span>Підготуй дані Google Sheets</h2>
+    <div class="note">
+        <p>Боту потрібні дані з таблиці, щоб підставляти суму в потрібну комірку та експортувати PDF.</p>
+    </div>
+    <ol>
+        <li>Відкрий потрібну таблицю в Google Sheets.</li>
+        <li>Скопіюй <strong>Spreadsheet ID</strong> — це довга частина в адресному рядку між <code>/d/</code> та <code>/edit</code>.</li>
+        <li>Переконайся, що потрібний лист має назву <strong>Лист1</strong> (або запиши фактичну назву для змінної <code>SHEET_NAME</code>).</li>
+        <li>Визнач комірку, куди бот має записувати суму (наприклад, <strong>C25</strong> для змінної <code>SUM_CELL</code>).</li>
+    </ol>
+    <figure class="screenshot">
+        <img src="screenshots/step10_spreadsheet_id.webp" alt="Пошук Spreadsheet ID">
+        <figcaption>У браузері виділено <strong>Spreadsheet ID</strong>.</figcaption>
+    </figure>
+    <figure class="screenshot">
+        <img src="screenshots/step11_sheet_name.webp" alt="Перейменування листа">
+        <figcaption>Переконайся, що лист називається <strong>Лист1</strong> або запам’ятай свою назву.</figcaption>
+    </figure>
+    <figure class="screenshot">
+        <img src="screenshots/step12_sum_cell.webp" alt="Комірка для введення суми">
+        <figcaption>Визнач комірку (наприклад, <strong>C25</strong>), куди бот записуватиме суму.</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">7</span>Надай доступ сервісному акаунту</h2>
+    <ol>
+        <li>У таблиці натисни <strong>Share</strong> (Поділитися).</li>
+        <li>У поле введи адресу сервісного акаунта (наприклад, <code>telegram-bot@telegram-bot-api.iam.gserviceaccount.com</code>).</li>
+        <li>Вибери роль <strong>Editor</strong> і натисни <strong>Done</strong>.</li>
+        <li>Якщо PDF створюється з окремого файла на Google Drive — надай йому такий самий доступ.</li>
+    </ol>
+    <figure class="screenshot">
+        <img src="screenshots/step13_share_sheet.webp" alt="Надання доступу сервісному акаунту">
+        <figcaption>Додай сервісний акаунт у співавтори з правами <strong>Editor</strong>.</figcaption>
+    </figure>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">8</span>Передай ключ і змінні для бота</h2>
+    <p>Після завершення попередніх кроків у тебе є:</p>
+    <ul>
+        <li>Завантажений JSON-файл сервісного акаунта.</li>
+        <li>Ідентифікатор таблиці (<code>SPREADSHEET_ID</code>).</li>
+        <li>Назва аркуша (<code>SHEET_NAME</code>, наприклад, <code>Лист1</code>).</li>
+        <li>Комірка для суми (<code>SUM_CELL</code>, наприклад, <code>C25</code>).</li>
+    </ul>
+    <p>Ці значення потрібно передати розробнику або додати в файл <code>.env</code> бота:</p>
+    <div class="env-list">
+        <code>GOOGLE_SERVICE_ACCOUNT_FILE=telegram-bot-123abc456def.json</code>
+        <code>SPREADSHEET_ID=1AbCdEfGhIjKlMnOpQrStUvWxYz1234567890</code>
+        <code>SHEET_NAME=Лист1</code>
+        <code>SUM_CELL=C25</code>
+    </div>
+    <div class="note">
+        <p>Не змінюй вміст JSON-файла та зберігай його в безпечному місці. Передавай ключ лише довіреним людям.</p>
+    </div>
+</section>
+
+<section>
+    <h2 class="step-header"><span class="badge">9</span>Підсумок</h2>
+    <ul>
+        <li>Створено Google Cloud проєкт і включено Google Sheets API та Google Drive API.</li>
+        <li>Створено сервісний акаунт із роллю <strong>Editor</strong> та згенеровано JSON-ключ.</li>
+        <li>Підготовлено таблицю: визначено <code>SPREADSHEET_ID</code>, <code>SHEET_NAME</code>, <code>SUM_CELL</code>.</li>
+        <li>Сервісний акаунт має доступ до таблиці та файлів на Google Drive.</li>
+    </ul>
+    <p>Все готово для передачі ключа та параметрів розробнику, щоб Telegram-бот міг працювати з вашою таблицею.</p>
+</section>
+</body>
+</html>
